@@ -27,30 +27,30 @@ st.set_page_config(page_title="Text Generation Evaluation with BLEU Scores", lay
 
 # ----------------------------
 # Custom CSS for an Attractive, Professional Look
-st.markdown("""
+# 1) Remove padding/margin from the main container
+# 2) Style the cover text
+st.markdown(
+    """
     <style>
+    /* Remove default padding/margin so cover image can fill the screen */
+    .block-container {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
     .stApp {
         background-color: #f9f9f9;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .main-header {
-        font-size: 2.8em;
-        font-weight: 600;
-        color: #2c3e50;
-        text-align: center;
-        margin-bottom: 10px;
-    }
     .main-header-custom {
         font-size: 3.0em;
         font-weight: 600;
-        color: #FF6347; /* Tomato */
-        
+        color: #1920f7; /* Tomato */
         text-align: justify;
         margin: 0 20px;
     }
     .description-custom {
         font-size: 1.8em;
-        color: #ccc623; /* DodgerBlue */
+        color: #db3d12; /* DodgerBlue */
         text-align: justify;
         margin: 0 20px;
     }
@@ -60,38 +60,10 @@ st.markdown("""
         margin-top: 20px;
         margin-bottom: 10px;
     }
-    .section-header {
-        font-size: 1.2em;
-        color: #2c3e50;
-        margin-bottom: 5px;
-    }
-    .small-text {
-        font-size: 0.9em;
-        color: #7f8c8d;
-    }
-    .sidebar-section {
-        margin-bottom: 20px;
-    }
     </style>
-""", unsafe_allow_html=True)
-
-# ----------------------------
-# Cover Page: Show Only if No Reference Text Provided
-if not st.sidebar.text_area("Paste your reference text here", height=10).strip():
-    cover_html = f"""
-    <div style="position: relative; text-align: center; color: white;">
-      <img src="https://cfcdn.decopy.ai/products/ai-humanizer.jpg" alt="Cover Image" style="width: 100%; opacity: 0.8;">
-      <div style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -30%); width: 90%;">
-        <div class="main-header-custom">Text Generation Evaluation Using BLEU Scores</div>
-        <div class="description-custom">
-          Evaluate the quality of AI-generated text using BLEU scores by comparing it with a reference text.
-          Adjust parameters and explore advanced grid search options to fine-tune your model.
-        </div>
-      </div>
-    </div>
-    """
-    st.markdown(cover_html, unsafe_allow_html=True)
-    st.stop()
+    """,
+    unsafe_allow_html=True
+)
 
 # ----------------------------
 # Sidebar: Organized into Clear Sections
@@ -119,10 +91,12 @@ with st.sidebar:
     
     # --- Smoothing Method Selection ---
     with st.expander("Smoothing Method", expanded=True):
-        smoothing_method = st.selectbox("Select Smoothing Method", 
-                                        options=["Method 1", "Method 2", "Method 3", 
-                                                 "Method 4", "Method 5", "Method 6", "Method 7"],
-                                        index=0)
+        smoothing_method = st.selectbox(
+            "Select Smoothing Method", 
+            options=["Method 1", "Method 2", "Method 3", 
+                     "Method 4", "Method 5", "Method 6", "Method 7"],
+            index=0
+        )
     
     # --- Advanced Grid Search Settings ---
     with st.expander("Advanced Grid Search Settings", expanded=False):
@@ -131,11 +105,33 @@ with st.sidebar:
             grid_ngram = st.multiselect("n-gram Orders", options=[2, 3, 4], default=[2, 3, 4])
             grid_words = st.multiselect("Words to Generate", options=[20, 50, 100], default=[20, 50, 100])
             grid_samples = st.number_input("Samples for Grid Search", min_value=1, max_value=20, value=3, step=1)
-            grid_smoothing = st.multiselect("Smoothing Methods", 
-                                            options=["Method 1", "Method 2", "Method 3", 
-                                                     "Method 4", "Method 5", "Method 6", "Method 7"],
-                                            default=["Method 1"])
+            grid_smoothing = st.multiselect(
+                "Smoothing Methods",
+                options=["Method 1", "Method 2", "Method 3", 
+                         "Method 4", "Method 5", "Method 6", "Method 7"],
+                default=["Method 1"]
+            )
         compare_all = st.checkbox("Compare All Smoothing Methods", value=False)
+
+# ----------------------------
+# Cover Page: Show Only if No Reference Text Provided
+if not reference_text or reference_text.strip() == "":
+    cover_html = """
+    <div style="position: absolute; top:0; left:0; width:80vw; height:100vh; overflow:hidden; text-align:center; color:white;">
+      <img src="https://cfcdn.decopy.ai/features/humanizer/ogimg.jpg"
+           alt="Cover Image"
+           style="width:100%; height:100%; object-fit:cover; opacity:0.8;">
+      <div style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -30%); width: 90%;">
+        <div class="main-header-custom">Text Generation Evaluation Using BLEU Scores</div>
+        <div class="description-custom">
+          Evaluate the quality of AI-generated text using BLEU scores by comparing it with a reference text.
+          Adjust parameters and explore advanced grid search options to fine-tune your model.
+        </div>
+      </div>
+    </div>
+    """
+    st.markdown(cover_html, unsafe_allow_html=True)
+    st.stop()
 
 # ----------------------------
 # Helper Functions
